@@ -34,6 +34,49 @@ pd.set_option('display.max_rows', None)
 # The fields we care about
 fields = ["CITY_TOWN_NAME", "RDWY"]
 
+
+"""
+	Handles command line argument processing
+"""
+def handleCmdArgs():
+	global filePath
+	global city
+	global roadway
+
+	# You can pass in a directory to find the IMPACT CSV files from,
+	# as well as a City to parse data for, and a roadway to further parse on.
+	# These are optional. By default, we'll parse the following:
+	# 1) Default location of "csv" inside the current working directory
+	# 2) Default City of "Cambridge"
+	# 3) Default roadway of "Memorial Drive"
+	try:
+		filePath = sys.argv[1]
+	except:
+		logging.warning("Command argv[1] not found! Running with default csv directory")
+		filePath = "csv"
+
+	try:
+		city = sys.argv[2]
+	except:
+		logging.warning("Command argv[2] not found! Running with default City: 'Cambridge'")
+		city = "cambridge"
+
+	"""
+		NOTE: there's a freaking space in the RDWAY column data...
+					TODO: figure out how to do a "grep" like match for a roadway
+								but for now I'm just adding in a space at the beginning...
+	"""
+	try:
+		roadway = sys.argv[3]
+	except:
+		logging.warning("Command argv[3] not found! Running with default Roadway: 'Memorial Drive'")
+		roadway = "Memorial Drive"
+
+	logging.info("filePath: %s" % filePath)
+	logging.info("city: %s" % city)
+	logging.info("roadway: %s" % roadway)
+
+
 """
 	merges all CSV files found under filePath. They should look like this:
 	2010_Crashes.csv
@@ -82,49 +125,15 @@ def mergeCsvFiles():
 	dframe.to_csv("analyzed/merged_massDOT_impact_data.csv", index=False)
 	
 	return dframe
-
+	
 """
-	main driver of the script
+	Filters the CSV file by City / Roadway
+	First checks to see if we've already filtered this City before, to avoid
+	reading in the ~2GB merged CSV file.
+	It also checks to see if we've already filtered this roadway before, and
+	will skip processing if so while logging a warning for us to know what happened.
 """
-def main():
-
-	global filePath
-	global city
-	global roadway
-
-	# You can pass in a directory to find the IMPACT CSV files from,
-	# as well as a City to parse data for, and a roadway to further parse on.
-	# These are optional. By default, we'll parse the following:
-	# 1) Default location of "csv" inside the current working directory
-	# 2) Default City of "Cambridge"
-	# 3) Default roadway of "Memorial Drive"
-	try:
-		filePath = sys.argv[1]
-	except:
-		logging.warning("Command argv[1] not found! Running with default csv directory")
-		filePath = "csv"
-
-	try:
-		city = sys.argv[2]
-	except:
-		logging.warning("Command argv[2] not found! Running with default City: 'Cambridge'")
-		city = "cambridge"
-
-	"""
-		NOTE: there's a freaking space in the RDWAY column data...
-					TODO: figure out how to do a "grep" like match for a roadway
-								but for now I'm just adding in a space at the beginning...
-	"""
-	try:
-		roadway = sys.argv[3]
-	except:
-		logging.warning("Command argv[3] not found! Running with default Roadway: 'Memorial Drive'")
-		roadway = "Memorial Drive"
-
-	logging.info("filePath: %s" % filePath)
-	logging.info("city: %s" % city)
-	logging.info("roadway: %s" % roadway)
-
+def filterCsvFiles():
 	# Skip processing the CSV files if the 'merged_massDOT_impact_data.csv' already exists
 	dframe = None
 	
@@ -177,6 +186,14 @@ def main():
 		logging.info("Number of Roadways in Combined CSV: %d" % ( dframe["RDWY"].nunique() ) )
 	logging.info("Number of Roadways in Cambridge: %d" % ( resultDF["RDWY"].nunique() ) )
 	logging.info("Number of crashes in %s on %s: %d" % (city, roadway, finalDF.shape[0]))
+
+"""
+	main driver of the script
+"""
+def main():
+
+	handleCmdArgs()
+	filterCsvFiles()
 
 main()
 
