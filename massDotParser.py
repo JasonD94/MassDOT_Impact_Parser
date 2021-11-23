@@ -184,7 +184,7 @@ def filterCsvFiles():
 
 	if not os.path.exists(filePathCheck):
 		logging.info("Number of Roadways in Combined CSV: %d" % ( dframe["RDWY"].nunique() ) )
-	logging.info("Number of Roadways in Cambridge: %d" % ( resultDF["RDWY"].nunique() ) )
+	logging.info("Number of Roadways in %s: %d" % (city, resultDF["RDWY"].nunique() ) )
 	logging.info("Number of crashes in %s on %s: %d" % (city, roadway, finalDF.shape[0]))
 
 """
