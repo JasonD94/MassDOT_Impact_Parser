@@ -23,9 +23,16 @@ startTime = time.time()
 # Logging setup
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.DEBUG, filename='massDotParser.log')
 logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
+logging.info("Starting massDotParser.py")
+
+# Additional logging setup - show ALL column names
+# https://stackoverflow.com/a/49189503
+pd.set_option('display.max_columns', None)
+pd.set_option('display.max_rows', None)
 
 # The fields we care about
 fields = ["CITY_TOWN_NAME", "RDWY"]
+
 
 # You can pass in a directory to find the IMPACT CSV files from,
 # as well as a City to parse data for, and a roadway to further parse on.
@@ -48,9 +55,8 @@ except:
 try:
   roadway = sys.argv[3]
 except:
-  logging.warning("Command argv[3] not found! Running with default Roadway: Memorial Drive\n")
+  logging.warning("Command argv[3] not found! Running with default Roadway: Memorial Drive")
   roadway = "Memorial Drive"
-
 
 logging.debug("filePath: %s" % filePath)
 logging.debug("city: %s" % city)
@@ -63,15 +69,39 @@ all_files = glob.glob(filePath + "/*.csv")
 li = []
 
 for filename in all_files:
-	df = pd.read_csv(filename)
+
+	# NOTE: low_memory=False is hacky. TODO: fix the DtypWarning: Columns have mixed types.
+	# https://stackoverflow.com/a/27232309
+	'''
+	Errors look like:
+		sys:1: DtypeWarning: Columns (34) have mixed types. Specify dtype option on import or set low_memory=False.
+		sys:1: DtypeWarning: Columns (33) have mixed types. Specify dtype option on import or set low_memory=False.
+		sys:1: DtypeWarning: Columns (30,33,58) have mixed types. Specify dtype option on import or set low_memory=False.
+		sys:1: DtypeWarning: Columns (34,109) have mixed types. Specify dtype option on import or set low_memory=False.
+		sys:1: DtypeWarning: Columns (29,33,34,109) have mixed types. Specify dtype option on import or set low_memory=False.
+		sys:1: DtypeWarning: Columns (29,30,67) have mixed types. Specify dtype option on import or set low_memory=False.
+		sys:1: DtypeWarning: Columns (66) have mixed types. Specify dtype option on import or set low_memory=False.
+		sys:1: DtypeWarning: Columns (95,107) have mixed types. Specify dtype option on import or set low_memory=False.
+		sys:1: DtypeWarning: Columns (28) have mixed types. Specify dtype option on import or set low_memory=False.
+	'''
+	df = pd.read_csv(filename, low_memory=False)
 	
 	logging.debug("df columns: %s" % df.columns)
+	logging.debug("df columns: %s" % df.columns.tolist())
 	
 	li.append(df)
 
-dframe = pd.concat(li, axis=0)
+'''
+TODO: investigate the FutureWarning about sorting:
+massDotParser.py:81: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+For now, setting sort=False
+'''
+dframe = pd.concat(li, axis=0, sort=False)
 
 logging.debug("dframe columns: %s" % dframe.columns)
+logging.debug("dframe columns: %s" % dframe.columns.tolist())
 
 # dframe should have all the data we want now. Let's filter it by "CITY_TOWN_NAME"
 # and "RDWY"
