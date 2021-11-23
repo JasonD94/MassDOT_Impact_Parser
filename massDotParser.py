@@ -1,5 +1,8 @@
 import pandas as pd
 import glob
+import time
+import sys
+import logging
 
 """
     This script will:
@@ -11,9 +14,15 @@ import glob
     * Search for years, such as "2010 Crashes"
 """
 
+# Variables
 filePath = None
 city = None
 roadway = None
+startTime = time.time()
+
+# Logging setup
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.DEBUG, filename='massDotParser.log')
+logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
 # The fields we care about
 fields = ["CITY_TOWN_NAME", "RDWY"]
@@ -27,25 +36,25 @@ fields = ["CITY_TOWN_NAME", "RDWY"]
 try:
   filePath = sys.argv[1]
 except:
-  print("Command argv[1] not found! Running with default csv directory")
+  logging.warning("Command argv[1] not found! Running with default csv directory")
   filePath = "csv/"
 
 try:
-  city = sys.argv[2]
+  city = sys.argv[2].upper()
 except:
-  print("Command argv[2] not found! Running with default City: Cambridge")
-  city = "CAMBRIDGE"
+  logging.warning("Command argv[2] not found! Running with default City: Cambridge")
+  city = "cambridge".upper()
     
 try:
   roadway = sys.argv[3]
 except:
-  print("Command argv[3] not found! Running with default Roadway: Memorial Drive\n")
+  logging.warning("Command argv[3] not found! Running with default Roadway: Memorial Drive\n")
   roadway = "Memorial Drive"
 
 
-print("filePath: %s" % filePath)
-print("city: %s" % city)
-print("roadway: %s" % roadway)
+logging.debug("filePath: %s" % filePath)
+logging.debug("city: %s" % city)
+logging.debug("roadway: %s" % roadway)
 
 # Stealing this code of Stackoverflow:
 # https://stackoverflow.com/a/21232849
@@ -54,10 +63,15 @@ all_files = glob.glob(filePath + "/*.csv")
 li = []
 
 for filename in all_files:
-	df = pd.read_csv(filename, index_col=None, header=0)
+	df = pd.read_csv(filename)
+	
+	logging.debug("df columns: %s" % df.columns)
+	
 	li.append(df)
 
-dframe = pd.concat(li, axis=0, ignore_index=True)
+dframe = pd.concat(li, axis=0)
+
+logging.debug("dframe columns: %s" % dframe.columns)
 
 # dframe should have all the data we want now. Let's filter it by "CITY_TOWN_NAME"
 # and "RDWY"
@@ -71,7 +85,14 @@ resultDF = dframe[dframe["CITY_TOWN_NAME"] == city]
 #resultDF = resultDF[resultDF["RDWY"] == roadway]
 
 # Export the final filtered CSV to file
-resultDF.to_csv("analyzed/filtered_massDOT_data_%s.csv" % city, index=True)
+# index=True required to get the first column to show up; see this SO post:
+# https://stackoverflow.com/a/62299935
+resultDF.reset_index()
+resultDF.to_csv("analyzed/filtered_massDOT_data_%s.csv" % city)
 
 # Do some stats too
 
+
+# Debug - how long the script takes to run
+executionTime = (time.time() - startTime)
+logging.info('Execution time in seconds: %.2f seconds' % round(executionTime, 2))
