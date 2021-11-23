@@ -94,13 +94,13 @@ is up to snuff every time I make changes to it.
 Also note: tester.sh is a shell script, which can automagically generate files
 for the following Cities/Roadway combinations:
 
-City | Road
-------------------------------------
-"Arlington" | "Mystic Valley Parkway"
-"Cambridge" | "Memorial Drive"
-"Medford" | "Mystic Valley Parkway"
-"Somerville" | "Highland Ave"
-"Somerville" | "Mystic Valley Parkway"
+| City        | Road                    |
+|-------------|-------------------------|
+|"Arlington"  | "Mystic Valley Parkway" |
+|"Cambridge"  | "Memorial Drive"        |
+|"Medford"    | "Mystic Valley Parkway" |
+|"Somerville" | "Highland Ave"          |
+|"Somerville" | "Mystic Valley Parkway" |
 
 I may add more to it in the future as I become aware of roadways and Cities that
 have an interest in collecting and visualing crash data
