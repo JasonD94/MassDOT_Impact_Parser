@@ -22,7 +22,7 @@ roadway = None
 startTime = time.time()
 
 # Logging setup
-logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.DEBUG, filename='massDotParser.log')
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO, filename='massDotParser.log')
 logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 logging.info("Starting massDotParser.py")
 
@@ -80,6 +80,9 @@ def mergeCsvFiles():
 	'''
 	dframe = pd.concat(li, axis=0, sort=False)
 	
+	# Export to disk to speed up future runs
+	dframe.to_csv("analyzed/merged_massDOT_impact_data.csv")
+	
 	return dframe
 	
 """
@@ -129,30 +132,34 @@ def main():
 	
 	# TODO: make this param and check that the directory exists
 	filePathCheck = "analyzed/merged_massDOT_impact_data.csv"
+	cityPathCheck = "analyzed/massDOT_data_%s.csv" % city
 	
 	if not os.path.exists(filePathCheck):
 		logging.debug("merged_massDOT_impact_data.csv does NOT exist, generating it now!")
 		dframe = mergeCsvFiles()
 	else:
 		logging.debug("merged_massDOT_impact_data.csv exists!")
-		dframe = pd.read_csv("analyzed/merged_massDOT_impact_data.csv", low_memory=False)
+		
+		# To speed up future runs, if the City file already exists, let's filter
+		# off of that instead of loading in a ~2GB file and filtering it again.
+		if not os.path.exists(cityPathCheck):
+			dframe = pd.read_csv("analyzed/merged_massDOT_impact_data.csv", low_memory=False)
+			logging.info("dframe columns: %s" % dframe.columns)
+			logging.info("dframe columns: %s" % dframe.columns.tolist())
 
-	logging.info("dframe columns: %s" % dframe.columns)
-	logging.info("dframe columns: %s" % dframe.columns.tolist())
-
-	# dframe should have all the data we want now. Let's filter it by "CITY_TOWN_NAME"
-	# and "RDWY"
-	# Also, let's export dframe to a file too.
-	#
-	# NOTE: make this an optional param. It took like 2GB of RAM and a solid minute
-	# or two to run on my machine.
-	#dframe.to_csv("analyzed/merged_massDOT_impact_data.csv")
-
-	# Switching to using .contains() instead of == so we can find matches that aren't
-	# 100% matches. Some columns have stuff like:
-	# "HIGHLAND AVENUE / TOWER STREET" that we won't match on if we're too strict
-	# about it. Also using case=False to avoid doing .upper() calls
-	resultDF = dframe[dframe["CITY_TOWN_NAME"].str.contains(city, case=False)]
+	# Skip this logic if we already determined the City filtered file exists
+	if not os.path.exists(cityPathCheck):
+		# Switching to using .contains() instead of == so we can find matches that aren't
+		# 100% matches. Some columns have stuff like:
+		# "HIGHLAND AVENUE / TOWER STREET" that we won't match on if we're too strict
+		# about it. Also using case=False to avoid doing .upper() calls
+		resultDF = dframe[dframe["CITY_TOWN_NAME"].str.contains(city, case=False)]
+		logging.info("resultDF columns: %s" % resultDF.columns)
+		logging.info("resultDF columns: %s" % resultDF.columns.tolist())
+	else:
+		resultDF = pd.read_csv(cityPathCheck, low_memory=False)
+		logging.info("resultDF columns: %s" % resultDF.columns)
+		logging.info("resultDF columns: %s" % resultDF.columns.tolist())
 
 	# Export the final filtered CSV to file
 	# index=True required to get the first column to show up; see this SO post:
@@ -165,12 +172,15 @@ def main():
 	finalDF.to_csv("analyzed/massDOT_data_%s%s.csv" % (city, roadway.replace(" ", "_")))
 
 	# Do some stats too
+	#(make sure to ignore the merged stats if we're skipping them!)
 	logging.info("*************************************************************************************************")
-	logging.info("Number of totoal rows: %d, Number of total columns: %d" % (dframe.shape[0], dframe.shape[1]))
+	if not os.path.exists(filePathCheck):
+		logging.info("Number of totoal rows: %d, Number of total columns: %d" % (dframe.shape[0], dframe.shape[1]))
 	logging.info("Number of %s rows: %d, Number of %s columns: %d" %(city, resultDF.shape[0], city, resultDF.shape[1]))
 	logging.info("Number of %s rows: %d, Number of %s columns: %d" %(roadway, finalDF.shape[0], roadway, finalDF.shape[1]))
 
-	logging.info("Number of Roadways in Combined CSV: %d" % ( dframe["RDWY"].nunique() ) )
+	if not os.path.exists(filePathCheck):
+		logging.info("Number of Roadways in Combined CSV: %d" % ( dframe["RDWY"].nunique() ) )
 	logging.info("Number of Roadways in Cambridge: %d" % ( resultDF["RDWY"].nunique() ) )
 	logging.info("Number of crashes in %s on %s: %d" % (city, roadway, finalDF.shape[0]))
 
