@@ -94,9 +94,9 @@ def mergeCsvFiles():
 
 	for filename in all_files:
 
-		# NOTE: index_col=0 in read_csv required as well as index=False required in
-		#       to_csv to avoid the index column from being written to the CSV files!
-		# See: https://stackoverflow.com/a/57179677 for more details
+		# NOTE: index=False is required in to_csv to avoid the index column from 
+		#			  being written to the CSV files!
+		#       See: https://stackoverflow.com/a/57179677 for more details
 
 		'''
 			NOTE: low_memory=False is hacky. TODO: fix the DtypWarning: Columns have mixed types.
@@ -104,7 +104,7 @@ def mergeCsvFiles():
 			Errors look like:
 				sys:1: DtypeWarning: Columns (34) have mixed types. Specify dtype option on import or set low_memory=False.
 		'''
-		df = pd.read_csv(filename, index_col=0, low_memory=False)
+		df = pd.read_csv(filename, low_memory=False)
 		
 		logging.debug("df columns: %s" % df.columns)
 		logging.debug("df columns: %s" % df.columns.tolist())
@@ -151,7 +151,7 @@ def filterCsvFiles():
 		# To speed up future runs, if the City file already exists, let's filter
 		# off of that instead of loading in a ~2GB file and filtering it again.
 		if not os.path.exists(cityPathCheck):
-			dframe = pd.read_csv("analyzed/merged_massDOT_impact_data.csv", index_col=0, low_memory=False)
+			dframe = pd.read_csv("analyzed/merged_massDOT_impact_data.csv", low_memory=False)
 
 	# Skip this logic if we already determined the City filtered file exists
 	if not os.path.exists(cityPathCheck):
@@ -164,7 +164,7 @@ def filterCsvFiles():
 		# Export the final filtered CSV to file
 		resultDF.to_csv("analyzed/massDOT_data_%s.csv" % city, index=False)
 	else:
-		resultDF = pd.read_csv(cityPathCheck, index_col=0, low_memory=False)
+		resultDF = pd.read_csv(cityPathCheck, low_memory=False)
 
 	# Filter down to RDWY too, assuming we didn't already do this
 	if os.path.exists(roadwayPathCheck):
