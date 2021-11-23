@@ -140,7 +140,7 @@ def filterCsvFiles():
 	# TODO: make this param and check that the directory exists
 	filePathCheck = "analyzed/merged_massDOT_impact_data.csv"
 	cityPathCheck = "analyzed/massDOT_data_%s.csv" % city
-	roadwayPathCheck = "analyzed/massDOT_data_%s%s.csv" % (city, roadway.replace(" ", "_"))
+	roadwayPathCheck = "analyzed/massDOT_data_%s_%s.csv" % (city, roadway.replace(" ", "_"))
 	
 	if not os.path.exists(filePathCheck):
 		logging.debug("merged_massDOT_impact_data.csv does NOT exist, generating it now!")
@@ -172,7 +172,7 @@ def filterCsvFiles():
 		exit()
 	
 	finalDF = resultDF[resultDF["RDWY"].str.contains(roadway, case=False, na=False)]
-	finalDF.to_csv("analyzed/massDOT_data_%s%s.csv" % (city, roadway.replace(" ", "_")), index=False)
+	finalDF.to_csv("analyzed/massDOT_data_%s_%s.csv" % (city, roadway.replace(" ", "_")), index=False)
 
 	# Do some stats too
 	#(make sure to ignore the merged stats if we're skipping them!)

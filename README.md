@@ -73,3 +73,43 @@ Example run:
 	Number of crashes in Cambridge on Memorial Drive: 1359
 	Execution time in seconds: 136.75 seconds
 ```
+
+More examples:
+
+```python massDotParser.py csv "Medford" "Mystic Valley Parkway"```
+
+```python massDotParser.py csv "Somerville" "Mystic Valley Parkway"```
+
+```python massDotParser.py csv "Arlington" "Mystic Valley Parkway"```
+
+## Tests
+
+Currently, no formal unit tests exist for this script. I have created a list
+of tests to try running before committing new code, as well as a shell script
+which can be helpful to test various parameters and cases.
+
+This is certainly something on my TODO list though, to make sure the script
+is up to snuff every time I make changes to it.
+
+Also note: tester.sh is a shell script, which can automagically generate files
+for the following Cities/Roadway combinations:
+
+City | Road
+------------------------------------
+"Arlington" | "Mystic Valley Parkway"
+"Cambridge" | "Memorial Drive"
+"Medford" | "Mystic Valley Parkway"
+"Somerville" | "Highland Ave"
+"Somerville" | "Mystic Valley Parkway"
+
+I may add more to it in the future as I become aware of roadways and Cities that
+have an interest in collecting and visualing crash data
+
+## Maps!
+
+So far I have created two maps out of the Mass IMPACT data, which can be found below:
+
+* [Mystic Valley Parkway Crashes](https://arcg.is/nP9mP)
+* [Somerville Crashes](https://arcg.is/0iKyH5)
+
+I plan to make more :)
