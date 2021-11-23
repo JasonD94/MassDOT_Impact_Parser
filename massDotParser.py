@@ -51,21 +51,17 @@ def mergeCsvFiles():
 
 	for filename in all_files:
 
-		# NOTE: low_memory=False is hacky. TODO: fix the DtypWarning: Columns have mixed types.
-		# https://stackoverflow.com/a/27232309
+		# NOTE: index_col=0 in read_csv required as well as index=False required in
+		#       to_csv to avoid the index column from being written to the CSV files!
+		# See: https://stackoverflow.com/a/57179677 for more details
+
 		'''
-		Errors look like:
-			sys:1: DtypeWarning: Columns (34) have mixed types. Specify dtype option on import or set low_memory=False.
-			sys:1: DtypeWarning: Columns (33) have mixed types. Specify dtype option on import or set low_memory=False.
-			sys:1: DtypeWarning: Columns (30,33,58) have mixed types. Specify dtype option on import or set low_memory=False.
-			sys:1: DtypeWarning: Columns (34,109) have mixed types. Specify dtype option on import or set low_memory=False.
-			sys:1: DtypeWarning: Columns (29,33,34,109) have mixed types. Specify dtype option on import or set low_memory=False.
-			sys:1: DtypeWarning: Columns (29,30,67) have mixed types. Specify dtype option on import or set low_memory=False.
-			sys:1: DtypeWarning: Columns (66) have mixed types. Specify dtype option on import or set low_memory=False.
-			sys:1: DtypeWarning: Columns (95,107) have mixed types. Specify dtype option on import or set low_memory=False.
-			sys:1: DtypeWarning: Columns (28) have mixed types. Specify dtype option on import or set low_memory=False.
+			NOTE: low_memory=False is hacky. TODO: fix the DtypWarning: Columns have mixed types.
+				https://stackoverflow.com/a/27232309
+			Errors look like:
+				sys:1: DtypeWarning: Columns (34) have mixed types. Specify dtype option on import or set low_memory=False.
 		'''
-		df = pd.read_csv(filename, low_memory=False)
+		df = pd.read_csv(filename, index_col=0, low_memory=False)
 		
 		logging.debug("df columns: %s" % df.columns)
 		logging.debug("df columns: %s" % df.columns.tolist())
@@ -81,10 +77,12 @@ def mergeCsvFiles():
 	dframe = pd.concat(li, axis=0, sort=False)
 	
 	# Export to disk to speed up future runs
-	dframe.to_csv("analyzed/merged_massDOT_impact_data.csv")
+	# Ignore the first column with index=False
+	# https://stackoverflow.com/a/25230582
+	dframe.to_csv("analyzed/merged_massDOT_impact_data.csv", index=False)
 	
 	return dframe
-	
+
 """
 	main driver of the script
 """
@@ -133,6 +131,7 @@ def main():
 	# TODO: make this param and check that the directory exists
 	filePathCheck = "analyzed/merged_massDOT_impact_data.csv"
 	cityPathCheck = "analyzed/massDOT_data_%s.csv" % city
+	roadwayPathCheck = "analyzed/massDOT_data_%s%s.csv" % (city, roadway.replace(" ", "_"))
 	
 	if not os.path.exists(filePathCheck):
 		logging.debug("merged_massDOT_impact_data.csv does NOT exist, generating it now!")
@@ -143,9 +142,7 @@ def main():
 		# To speed up future runs, if the City file already exists, let's filter
 		# off of that instead of loading in a ~2GB file and filtering it again.
 		if not os.path.exists(cityPathCheck):
-			dframe = pd.read_csv("analyzed/merged_massDOT_impact_data.csv", low_memory=False)
-			logging.info("dframe columns: %s" % dframe.columns)
-			logging.info("dframe columns: %s" % dframe.columns.tolist())
+			dframe = pd.read_csv("analyzed/merged_massDOT_impact_data.csv", index_col=0, low_memory=False)
 
 	# Skip this logic if we already determined the City filtered file exists
 	if not os.path.exists(cityPathCheck):
@@ -154,22 +151,19 @@ def main():
 		# "HIGHLAND AVENUE / TOWER STREET" that we won't match on if we're too strict
 		# about it. Also using case=False to avoid doing .upper() calls
 		resultDF = dframe[dframe["CITY_TOWN_NAME"].str.contains(city, case=False)]
-		logging.info("resultDF columns: %s" % resultDF.columns)
-		logging.info("resultDF columns: %s" % resultDF.columns.tolist())
+		
+		# Export the final filtered CSV to file
+		resultDF.to_csv("analyzed/massDOT_data_%s.csv" % city, index=False)
 	else:
-		resultDF = pd.read_csv(cityPathCheck, low_memory=False)
-		logging.info("resultDF columns: %s" % resultDF.columns)
-		logging.info("resultDF columns: %s" % resultDF.columns.tolist())
+		resultDF = pd.read_csv(cityPathCheck, index_col=0, low_memory=False)
 
-	# Export the final filtered CSV to file
-	# index=True required to get the first column to show up; see this SO post:
-	# https://stackoverflow.com/a/62299935
-	resultDF.reset_index()
-	resultDF.to_csv("analyzed/massDOT_data_%s.csv" % city)
-
-	# Filter down to RDWY too
+	# Filter down to RDWY too, assuming we didn't already do this
+	if os.path.exists(roadwayPathCheck):
+		logging.warning("Parsed file already exists: %s" % roadwayPathCheck)
+		exit()
+	
 	finalDF = resultDF[resultDF["RDWY"].str.contains(roadway, case=False, na=False)]
-	finalDF.to_csv("analyzed/massDOT_data_%s%s.csv" % (city, roadway.replace(" ", "_")))
+	finalDF.to_csv("analyzed/massDOT_data_%s%s.csv" % (city, roadway.replace(" ", "_")), index=False)
 
 	# Do some stats too
 	#(make sure to ignore the merged stats if we're skipping them!)
@@ -184,8 +178,8 @@ def main():
 	logging.info("Number of Roadways in Cambridge: %d" % ( resultDF["RDWY"].nunique() ) )
 	logging.info("Number of crashes in %s on %s: %d" % (city, roadway, finalDF.shape[0]))
 
-	# Debug - how long the script takes to run
-	executionTime = (time.time() - startTime)
-	logging.info('Execution time in seconds: %.2f seconds' % round(executionTime, 2))
-
 main()
+
+# Debug - how long the script takes to run
+executionTime = (time.time() - startTime)
+logging.info('Execution time in seconds: %.2f seconds' % round(executionTime, 2))
