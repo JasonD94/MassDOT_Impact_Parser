@@ -176,7 +176,7 @@ def filterCsvFiles():
 
 	# Do some stats too
 	#(make sure to ignore the merged stats if we're skipping them!)
-	logging.info("*************************************************************************************************")
+	logging.info("*****************************************************************************")
 	if not os.path.exists(filePathCheck):
 		logging.info("Number of totoal rows: %d, Number of total columns: %d" % (dframe.shape[0], dframe.shape[1]))
 	logging.info("Number of %s rows: %d, Number of %s columns: %d" %(city, resultDF.shape[0], city, resultDF.shape[1]))

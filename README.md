@@ -19,7 +19,17 @@ and then down to [Highland Ave](https://www.google.com/search?q=highland+ave+som
 
 Example run:
 ```
-
+	$ python massDotParser.py csv "Somerville" "Highland Ave"
+	Starting massDotParser.py
+	filePath: csv
+	city: Somerville
+	roadway: Highland Ave
+	******************************************************************************
+	Number of Somerville rows: 9357, Number of Somerville columns: 119
+	Number of Highland Ave rows: 396, Number of Highland Ave columns: 119
+	Number of Roadways in Cambridge: 2477
+	Number of crashes in Somerville on Highland Ave: 396
+	Execution time in seconds: 47.64 seconds
 ```
 
 Parse the Mass DOT data for the City of [Cambridge, MA](https://en.wikipedia.org/wiki/Cambridge,_Massachusetts) and then down to [Memorial Drive](https://www.google.com/search?q=memorial+drive+cambridge+ma)
@@ -34,7 +44,7 @@ Example run:
 	filePath: csv
 	city: Cambridge
 	roadway: Memorial Drive
-	*************************************************************************************************
+	******************************************************************************
 	Number of Cambridge rows: 19169, Number of Cambridge columns: 120
 	Number of Memorial Drive rows: 1359, Number of Memorial Drive columns: 120
 	Number of Roadways in Cambridge: 4793
