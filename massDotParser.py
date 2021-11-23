@@ -21,7 +21,7 @@ roadway = None
 startTime = time.time()
 
 # Logging setup
-logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.DEBUG, filename='massDotParser.log')
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO, filename='massDotParser.log')
 logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 logging.info("Starting massDotParser.py")
 
@@ -51,16 +51,21 @@ try:
 except:
   logging.warning("Command argv[2] not found! Running with default City: Cambridge")
   city = "cambridge".upper()
-    
+
+"""
+	NOTE: there's a freaking space in the RDWAY column data...
+				TODO: figure out how to do a "grep" like match for a roadway
+						  but for now I'm just adding in a space at the beginning...
+"""
 try:
-  roadway = sys.argv[3]
+  roadway = " " + sys.argv[3].upper()
 except:
   logging.warning("Command argv[3] not found! Running with default Roadway: Memorial Drive")
-  roadway = "Memorial Drive"
+  roadway = " Memorial Drive".upper()
 
-logging.debug("filePath: %s" % filePath)
-logging.debug("city: %s" % city)
-logging.debug("roadway: %s" % roadway)
+logging.info("filePath: %s" % filePath)
+logging.info("city: %s" % city)
+logging.info("roadway: %s" % roadway)
 
 # Stealing this code of Stackoverflow:
 # https://stackoverflow.com/a/21232849
@@ -100,8 +105,8 @@ For now, setting sort=False
 '''
 dframe = pd.concat(li, axis=0, sort=False)
 
-logging.debug("dframe columns: %s" % dframe.columns)
-logging.debug("dframe columns: %s" % dframe.columns.tolist())
+logging.info("dframe columns: %s" % dframe.columns)
+logging.info("dframe columns: %s" % dframe.columns.tolist())
 
 # dframe should have all the data we want now. Let's filter it by "CITY_TOWN_NAME"
 # and "RDWY"
@@ -112,16 +117,26 @@ logging.debug("dframe columns: %s" % dframe.columns.tolist())
 #dframe.to_csv("analyzed/merged_massDOT_impact_data.csv")
 
 resultDF = dframe[dframe["CITY_TOWN_NAME"] == city]
-#resultDF = resultDF[resultDF["RDWY"] == roadway]
 
 # Export the final filtered CSV to file
 # index=True required to get the first column to show up; see this SO post:
 # https://stackoverflow.com/a/62299935
 resultDF.reset_index()
-resultDF.to_csv("analyzed/filtered_massDOT_data_%s.csv" % city)
+resultDF.to_csv("analyzed/massDOT_data_%s.csv" % city)
+
+# Filter down to RDWY too
+finalDF = resultDF[resultDF["RDWY"] == roadway]
+finalDF.to_csv("analyzed/massDOT_data_%s%s.csv" % (city, roadway.replace(" ", "_")))
 
 # Do some stats too
+logging.info("*************************************************************************************************")
+logging.info("Number of totoal rows: %d, Number of total columns: %d" % (dframe.shape[0], dframe.shape[1]))
+logging.info("Number of %s rows: %d, Number of %s columns: %d" %(city, resultDF.shape[0], city, resultDF.shape[1]))
+logging.info("Number of %s rows: %d, Number of %s columns: %d" %(roadway, finalDF.shape[0], roadway, finalDF.shape[1]))
 
+logging.info("Number of Roadways in Combined CSV: %d" % ( dframe["RDWY"].nunique() ) )
+logging.info("Number of Roadways in Cambridge: %d" % ( resultDF["RDWY"].nunique() ) )
+logging.info("Number of crashes in %s on %s: %d" % (city, roadway, finalDF.shape[0]))
 
 # Debug - how long the script takes to run
 executionTime = (time.time() - startTime)
