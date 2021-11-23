@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Ignore working directories where we put CSV files. No need to import those
+# into GitHub!
+analyzed/
+csv/
+xlsx/
