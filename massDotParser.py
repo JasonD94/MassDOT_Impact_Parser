@@ -10,9 +10,10 @@ import logging
     
     * Merge several MassDOT CSV files that have been exported from
       the MassDOT Crash Open Data Portal aka IMPACT
-    * CSV files can be exported from the following site:
-      https://massdot-impact-crashes-vhb.opendata.arcgis.com/
-    * Search for years, such as "2010 Crashes"
+    * Filter based on a provided City / Roadway name
+		
+		The README has more details on where to get the MassDOT CSV files for
+		the merging & filtering, as well as examples of running this script.
 """
 
 # Variables
@@ -43,6 +44,15 @@ def handleCmdArgs():
 	global city
 	global roadway
 
+	# TODO: make these args like 'path=xyz', so that we can call the script
+	#       with these arguments in different orders, or ignore/default some
+	#       arguments. right now you HAVE to give a path, even if you're ok
+	#       with the default csv directory.
+  #
+	# TODO: add another param for "analyzed_directory", which would be a directory
+	#       to export merged/filtered CSV files
+	#
+	
 	# You can pass in a directory to find the IMPACT CSV files from,
 	# as well as a City to parse data for, and a roadway to further parse on.
 	# These are optional. By default, we'll parse the following:

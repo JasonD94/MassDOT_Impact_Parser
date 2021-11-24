@@ -133,3 +133,4 @@ dmypy.json
 analyzed/
 csv/
 xlsx/
+extra_data/
