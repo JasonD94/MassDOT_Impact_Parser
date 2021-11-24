@@ -7,6 +7,8 @@
 python massDotParser.py csv "Arlington" "Mystic Valley Parkway"
 python massDotParser.py csv "Boston" "Memorial Drive"
 python massDotParser.py csv "Cambridge" "Memorial Drive"
+python massDotParser.py csv "Cambridge" "Edwin Land Blvd"
+python massDotParser.py csv "Cambridge" "Edwin"
 python massDotParser.py csv "Medford" "Mystic Valley Parkway"
 python massDotParser.py csv "Somerville" "Highland Ave"
 python massDotParser.py csv "Somerville" "Mystic Valley Parkway"
