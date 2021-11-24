@@ -180,8 +180,15 @@ have an interest in collecting and visualing crash data
 
 So far I have created two maps out of the Mass IMPACT data, which can be found below:
 
+# City/Roadway Maps:
+* [Highland Ave (Somerville, MA) Crashes](https://arcg.is/1fbfCn0)
 * [Memorial Drive (Cambridge, MA) Crashes](https://arcg.is/1Tz4Pf)
-* [Mystic Valley Parkway Crashes](https://arcg.is/nP9mP)
-* [Somerville Crashes](https://arcg.is/0iKyH5)
+* [Memorial Drive + Edwin H Land Blvd (Cambridge, MA) Crashes](https://arcg.is/1jGn8a)
+* [Mystic Valley Parkway (Medford Only) Crashes](https://arcg.is/nP9mP)
+* [Mystic Valley Parkway (Arlington, Medford and Somerville) Crashes](https://arcg.is/O4iin)
 
-I plan to make more :)
+# Citywide Maps:
+* [Boston Crashes](https://arcg.is/HKKnX)
+* [Cambridge Crashes](https://arcg.is/15aO4W)
+* [Medford Crashes](https://arcg.is/1nyKKz)
+* [Somerville Crashes](https://arcg.is/0iKyH5)

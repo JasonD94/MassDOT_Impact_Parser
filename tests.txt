@@ -5,9 +5,15 @@
 			  manually run tests
 ********************************************************************************
 
+# Test using the default csv directory. I keep 2010 - 2021 data in here
 python massDotParser.py csv "Arlington" "Mystic Valley Parkway"
 python massDotParser.py csv "Boston" "Memorial Drive"
 python massDotParser.py csv "Cambridge" "Memorial Drive"
 python massDotParser.py csv "Medford" "Mystic Valley Parkway"
 python massDotParser.py csv "Somerville" "Highland Ave"
 python massDotParser.py csv "Somerville" "Mystic Valley Parkway"
+
+# Test using a different input directory. I keep 2002 - 2021 data in here
+python massDotParser.py extra_data "Cambridge" "Memorial Drive"
+python massDotParser.py extra_data "Cambridge" "Edwin Land Blvd"
+python massDotParser.py extra_data "Cambridge" "Edwin"
