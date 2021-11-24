@@ -31,6 +31,57 @@ more RAM. There's not much I can do about the size of this data except hopefully
 over time reduce the number of crashes happening in MA... each year has over
 _100,000 crashes_ which is just insane.
 
+## How to get all this data?
+
+Well, MassDOT sure doesn't make it easy. It appears their datasets go all the way
+back to circa _2002_, so you can search the MassDOT IMPACT system for the following
+terms to get datasets:
+
+"2002 crashes", "2003 crashes", ..., "2020 crashes", "2021 crashes"
+
+Note that MassDOT warns the following on their webpage:
+
+> In addition, any crash records or data provided for the years 2017 and later 
+> are subject to change at any time and are not to be considered up-to-date or 
+> complete. As such, open years’ of crash data are for informational purposes only 
+> and should not be used for analysis.
+
+Crash data can be downloaded in CSV, KML, Shapefile, GeoJSON and file Geodatabase
+formats. This script works off of the CSV format.
+
+You can find links to all of the MassDOT IMPACT crash datasets below. Please note
+that each dataset is about ~150MB and may take several minutes to download. It appears
+to be slow because of the MassDOT system, or perhaps their backend which seems to point
+to "opendata.arcgis.com" APIs. I also recommend not downloading multiple of them at
+once because I have found that can crash your browser and even your network connection.
+Not sure how, but it's happened to me a few times so you've been warned.
+
+[2002 Crashes](https://massdot-impact-crashes-vhb.opendata.arcgis.com/datasets/MassDOT::2002-crashes/about)
+[2003 Crashes](https://massdot-impact-crashes-vhb.opendata.arcgis.com/datasets/MassDOT::2003-crashes/about)
+[2004 Crashes - note, the URL has a dash 1 in it for some reason...](https://massdot-impact-crashes-vhb.opendata.arcgis.com/datasets/MassDOT::2004-crashes-1/about)
+[2005 Crashes](https://massdot-impact-crashes-vhb.opendata.arcgis.com/datasets/MassDOT::2005-crashes/about)
+[2006 Crashes](https://massdot-impact-crashes-vhb.opendata.arcgis.com/datasets/MassDOT::2006-crashes/about)
+[2007 Crashes](https://massdot-impact-crashes-vhb.opendata.arcgis.com/datasets/MassDOT::2007-crashes/about)
+[2008 Crashes](https://massdot-impact-crashes-vhb.opendata.arcgis.com/datasets/MassDOT::2008-crashes/about)
+[2009 Crashes](https://massdot-impact-crashes-vhb.opendata.arcgis.com/datasets/MassDOT::2009-crashes/about)
+[2010 Crashes](https://massdot-impact-crashes-vhb.opendata.arcgis.com/datasets/MassDOT::2010-crashes/about)
+[2011 Crashes](https://massdot-impact-crashes-vhb.opendata.arcgis.com/datasets/MassDOT::2011-crashes/about)
+[2012 Crashes](https://massdot-impact-crashes-vhb.opendata.arcgis.com/datasets/MassDOT::2012-crashes/about)
+[2013 Crashes](https://massdot-impact-crashes-vhb.opendata.arcgis.com/datasets/MassDOT::2013-crashes/about)
+[2014 Crashes](https://massdot-impact-crashes-vhb.opendata.arcgis.com/datasets/MassDOT::2014-crashes/about)
+[2015 Crashes](https://massdot-impact-crashes-vhb.opendata.arcgis.com/datasets/MassDOT::2015-crashes/about)
+[2016 Crashes](https://massdot-impact-crashes-vhb.opendata.arcgis.com/datasets/MassDOT::2016-crashes/about)
+[2017 Crashes](https://massdot-impact-crashes-vhb.opendata.arcgis.com/datasets/MassDOT::2017-crashes/about)
+[2018 Crashes](https://massdot-impact-crashes-vhb.opendata.arcgis.com/datasets/MassDOT::2018-crashes/about)
+[2019 Crashes](https://massdot-impact-crashes-vhb.opendata.arcgis.com/datasets/MassDOT::2019-crashes/about)
+[2020 Crashes](https://massdot-impact-crashes-vhb.opendata.arcgis.com/datasets/MassDOT::2020-crashes/about)
+[2021 Crashes](https://massdot-impact-crashes-vhb.opendata.arcgis.com/datasets/MassDOT::2021-crashes/about)
+
+To download any of these datasets, you'd just hit the "Download" button, then
+hit "download" again under the CSV option. I may also post a zip archive in the 
+future for the 2002 - 2016 data; based on the warning from MassDOT it would be most
+accurate to download the 2017 - 2021 data live off of the MassDOT links.
+
 ## Example usage
 
 Parse the Mass DOT data for the City of [Somerville MA](https://en.wikipedia.org/wiki/Somerville,_Massachusetts) 
