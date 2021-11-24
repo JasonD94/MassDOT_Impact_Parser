@@ -5,6 +5,7 @@
 # when generating new files after adding new data
 
 python massDotParser.py csv "Arlington" "Mystic Valley Parkway"
+python massDotParser.py csv "Boston" "Memorial Drive"
 python massDotParser.py csv "Cambridge" "Memorial Drive"
 python massDotParser.py csv "Medford" "Mystic Valley Parkway"
 python massDotParser.py csv "Somerville" "Highland Ave"
