@@ -191,4 +191,4 @@ So far I have created two maps out of the Mass IMPACT data, which can be found b
 * [Boston Crashes](https://arcg.is/HKKnX)
 * [Cambridge Crashes](https://arcg.is/15aO4W)
 * [Medford Crashes](https://arcg.is/1nyKKz)
-* [Somerville Crashes](https://arcg.is/0iKyH5)
+* [Somerville Crashes](https://arcg.is/0z1eP4)
