@@ -31,7 +31,7 @@ more RAM. There's not much I can do about the size of this data except hopefully
 over time reduce the number of crashes happening in MA... each year has over
 _100,000 crashes_ which is just insane.
 
-## How to get all this data?
+## So how do I get all this data?
 
 Well, MassDOT sure doesn't make it easy. It appears their datasets go all the way
 back to circa _2002_, so you can search the MassDOT IMPACT system for the following

@@ -4,6 +4,7 @@ import time
 import os
 import sys
 import logging
+import argparse
 
 """
     This script will:
@@ -20,6 +21,7 @@ import logging
 filePath = None
 city = None
 roadway = None
+all_data = None
 startTime = time.time()
 
 # Logging setup
@@ -43,15 +45,31 @@ def handleCmdArgs():
 	global filePath
 	global city
 	global roadway
+	global all_data
 
-	# TODO: make these args like 'path=xyz', so that we can call the script
-	#       with these arguments in different orders, or ignore/default some
-	#       arguments. right now you HAVE to give a path, even if you're ok
-	#       with the default csv directory.
   #
 	# TODO: add another param for "analyzed_directory", which would be a directory
 	#       to export merged/filtered CSV files
 	#
+	
+	# Program description
+	text = "This script allows you to parse MassDOT IMPACT data. You'll need to provide \
+	a directory of MassDOT IMPACT data (see README for how to get this). By default, \
+	this script will look in csv/ but you can provide a different directory if needed. \
+	You should also pass a City and Roadway to filter on - by default, we'll parse \
+	for Cambridge/Memorial Drive. In the future, you'll also be able to generate \
+	data for every Town/City and Roadway in MA with a flag."
+	
+	# Initiate the parser
+	parser = argparse.ArgumentParser(description=text)
+	
+	parser.add_argument("-csv", "--csv_directory", help="Which CSV directory to merge/filter from; default is csv/")
+	parser.add_argument("-city", help="Which City/Town to filter the final CSV file on; default is Cambridge")
+	parser.add_argument("-r", "--roadway", help="Which roadway to filter the final CSV on; default is Memorial Drive")
+	parser.add_argument("-a", "--all_data", help="If set, we'll parse the MassDOT data for ALL cities & towns. This argument disregards any --city/--roadway arguments.", action='store_true')
+	
+	# Read arguments from the command line
+	args = parser.parse_args()
 	
 	# You can pass in a directory to find the IMPACT CSV files from,
 	# as well as a City to parse data for, and a roadway to further parse on.
@@ -59,32 +77,38 @@ def handleCmdArgs():
 	# 1) Default location of "csv" inside the current working directory
 	# 2) Default City of "Cambridge"
 	# 3) Default roadway of "Memorial Drive"
-	try:
-		filePath = sys.argv[1]
-	except:
-		logging.warning("Command argv[1] not found! Running with default csv directory")
+	if args.csv_directory:
+		logging.debug("found --csv_directory; setting filePath to %s" % args.csv_directory)
+		filePath = args.csv_directory
+	else:
+		logging.warning("--csv_directory not found! Running with default csv directory")
 		filePath = "csv"
 
-	try:
-		city = sys.argv[2]
-	except:
-		logging.warning("Command argv[2] not found! Running with default City: 'Cambridge'")
-		city = "cambridge"
+	if args.city:
+		logging.debug("found -city; setting City to %s" % args.city)
+		city = args.city
+	else:
+		logging.warning("-city not found! Running with default City: 'Cambridge'")
+		city = "Cambridge"
 
-	"""
-		NOTE: there's a freaking space in the RDWAY column data...
-					TODO: figure out how to do a "grep" like match for a roadway
-								but for now I'm just adding in a space at the beginning...
-	"""
-	try:
-		roadway = sys.argv[3]
-	except:
-		logging.warning("Command argv[3] not found! Running with default Roadway: 'Memorial Drive'")
+	if args.roadway:
+		logging.debug("Found --roadway; setting Roadway to %s" % args.roadway)
+		roadway = args.roadway
+	else:
+		logging.warning("--roadway not found! Running with default Roadway: 'Memorial Drive'")
 		roadway = "Memorial Drive"
+
+	if args.all_data:
+		logging.info("Found --all_data param. Will disregard %s/%s and look for ALL Town/Cities and Roadways in MA instead" % (city, roadway))
+		all_data = True
+	else:
+		logging.info("No --all_data argument provided.")
+		all_data = False
 
 	logging.info("filePath: %s" % filePath)
 	logging.info("city: %s" % city)
 	logging.info("roadway: %s" % roadway)
+	logging.info("all_data: %s" % all_data)
 
 
 """
