@@ -192,7 +192,7 @@ def filterAllTowns(dframe):
     logging.info("Number of crashes in %s: %d" % (city, resultDF.shape[0]))
     
     # Replace spaces and slashes with newlines
-    city = town.replace("/", "_").replace(" ", "")
+    city = town.replace("/", "_").replace(" ", "_")
     
     # Check for directory's existance, create it if it doesn't
     if not os.path.exists("analyzed/towns/"):
@@ -261,13 +261,8 @@ def filterCsvFiles():
     # Do some stats too
     #(make sure to ignore the merged stats if we're skipping them!)
     logging.info("*****************************************************************************")
-    if dframe:
-      logging.info("Number of totoal rows: %d, Number of total columns: %d" % (dframe.shape[0], dframe.shape[1]))
     logging.info("Number of %s rows: %d, Number of %s columns: %d" %(city, resultDF.shape[0], city, resultDF.shape[1]))
     logging.info("Number of %s rows: %d, Number of %s columns: %d" %(roadway, finalDF.shape[0], roadway, finalDF.shape[1]))
-
-    if dframe:
-      logging.info("Number of Roadways in Combined CSV: %d" % ( dframe["RDWY"].nunique() ) )
     logging.info("Number of Roadways in %s: %d" % (city, resultDF["RDWY"].nunique() ) )
     logging.info("Number of crashes in %s on %s: %d" % (city, roadway, finalDF.shape[0]))
 
